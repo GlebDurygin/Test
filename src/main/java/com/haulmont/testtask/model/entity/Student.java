@@ -58,7 +58,7 @@ public class Student implements Entity {
         this.middleName = middleName;
     }
 
-    public  Date getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 

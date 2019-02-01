@@ -27,15 +27,17 @@ public abstract class BasicModalWindow<T> extends Window {
         cancelButton.addClickListener(event -> close());
 
         buttonsLayout = new HorizontalLayout();
-        buttonsLayout.addComponents(okButton,cancelButton);
+        buttonsLayout.addComponents(okButton, cancelButton);
         buttonsLayout.setSpacing(false);
-        mainLayout.addComponents(formLayout,buttonsLayout);
-        mainLayout.setExpandRatio(formLayout,7.0f);
-        mainLayout.setExpandRatio(buttonsLayout,1.0f);
+        mainLayout.addComponents(formLayout, buttonsLayout);
+        mainLayout.setExpandRatio(formLayout, 7.0f);
+        mainLayout.setExpandRatio(buttonsLayout, 1.0f);
         constructForm();
     }
 
     abstract protected void constructForm();
+
     abstract protected T convertFormToObject(Long id);
+
     abstract protected T convertFormToObject();
 }

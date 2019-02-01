@@ -63,7 +63,7 @@ public class GroupService {
     public Group getGroup(Long id) {
         try {
             return groupDao.getById(id);
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             return new Group();
         }
     }

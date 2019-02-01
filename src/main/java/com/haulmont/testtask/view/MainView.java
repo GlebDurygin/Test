@@ -18,16 +18,16 @@ public class MainView extends VerticalLayout implements View {
         Button.ClickListener listener = (Button.ClickListener) event -> navigator.navigateTo(event.getButton().getData().toString());
 
         goToMainGroupView = new Button("Отображение списка групп");
-        goToMainGroupView.setData(GROUPS_PAGE);
+        goToMainGroupView.setData(GROUPS_VIEW);
         goToMainGroupView.addClickListener(listener);
         goToMainGroupView.setStyleName(MainThemeConstants.LINK_BUTTON);
 
         goToMainStudentView = new Button("Отображение списка студентов");
-        goToMainStudentView.setData(STUDENTS_PAGE);
+        goToMainStudentView.setData(STUDENTS_VIEW);
         goToMainStudentView.addClickListener(listener);
         goToMainStudentView.setStyleName(MainThemeConstants.LINK_BUTTON);
 
-        addComponents(title,goToMainGroupView, goToMainStudentView);
+        addComponents(title, goToMainGroupView, goToMainStudentView);
         setMargin(false);
         setSizeFull();
     }

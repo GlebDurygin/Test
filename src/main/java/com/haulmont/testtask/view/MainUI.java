@@ -38,17 +38,17 @@ public class MainUI extends UI {
         mainButton = new Button("Главная");
         mainButton.addStyleName(MainThemeConstants.BORDERLESS);
         mainButton.setHeight("100%");
-        mainButton.setData(MAIN_PAGE);
+        mainButton.setData(MAIN_VIEW);
 
         groupsButton = new Button("Группы");
         groupsButton.addStyleName(MainThemeConstants.BORDERLESS);
         groupsButton.setHeight("100%");
-        groupsButton.setData(GROUPS_PAGE);
+        groupsButton.setData(GROUPS_VIEW);
 
         studentsButton = new Button("Студенты");
         studentsButton.addStyleName(MainThemeConstants.BORDERLESS);
         studentsButton.setHeight("100%");
-        studentsButton.setData(STUDENTS_PAGE);
+        studentsButton.setData(STUDENTS_VIEW);
 
         headerLayout.addComponents(mainButton, groupsButton, studentsButton);
         headerLayout.setStyleName(MainThemeConstants.HEADER_LAYOUT);
@@ -69,9 +69,9 @@ public class MainUI extends UI {
 
     private void initNavigator() {
         navigator = new Navigator(this, viewLayout);
-        navigator.addView(MAIN_PAGE, new MainView());
-        navigator.addView(GROUPS_PAGE, new MainGroupView());
-        navigator.addView(STUDENTS_PAGE, new MainStudentView());
+        navigator.addView(MAIN_VIEW, new MainView());
+        navigator.addView(GROUPS_VIEW, new MainGroupView());
+        navigator.addView(STUDENTS_VIEW, new MainStudentView());
         mainButton.addClickListener(event -> navigator.navigateTo(mainButton.getData().toString()));
         groupsButton.addClickListener(event -> navigator.navigateTo(groupsButton.getData().toString()));
         studentsButton.addClickListener(event -> navigator.navigateTo(studentsButton.getData().toString()));

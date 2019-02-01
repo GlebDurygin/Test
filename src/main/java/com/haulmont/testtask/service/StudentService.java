@@ -7,8 +7,8 @@ import com.haulmont.testtask.model.entity.Student;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StudentService {
     private HSQLDBDaoManager daoManager;
@@ -60,18 +60,18 @@ public class StudentService {
     }
 
     public List<Student> getStudents(String filterLastName, String filterNumber) {
-        List<Student> list = new ArrayList<>();
         try {
-            for (Student student : studentDao.getAll()) {
-                boolean passesFilter = ((filterLastName == null || filterLastName.isEmpty()) ||
-                        student.getLastName().toLowerCase().contains(filterLastName.toLowerCase())) &&
-                        (groupDao.getById(student.getGroupId()).getNumber().toString().contains(filterNumber.toLowerCase()) || filterNumber == null || filterNumber.isEmpty());
-                if (passesFilter) list.add(student);
-            }
+            return studentDao.getAll().stream().filter(student -> {
+                try {
+                    return ((filterLastName == null || filterLastName.isEmpty()) ||
+                            student.getLastName().toLowerCase().contains(filterLastName.toLowerCase())) &&
+                            (groupDao.getById(student.getGroupId()).getNumber().toString().contains(filterNumber.toLowerCase()) || filterNumber == null || filterNumber.isEmpty());
+                } catch (SQLException e) {
+                    return false;
+                }
+            }).collect(Collectors.toList());
         } catch (SQLException e) {
             return new ArrayList<>();
         }
-        Collections.sort(list, (s1, s2) -> (int) (s2.getId() - s1.getId()));
-        return list;
     }
 }

@@ -50,6 +50,7 @@ public class HSQLDBGroupDao implements GroupDao {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
             group.setId(resultSet.getLong(TABLE_GROUP_ID));
             group.setNumber(resultSet.getInt(TABLE_GROUP_NUMBER));
             group.setFaculty(resultSet.getString(TABLE_GROUP_FACULTY));

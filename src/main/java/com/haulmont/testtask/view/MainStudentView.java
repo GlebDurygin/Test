@@ -48,7 +48,7 @@ public class MainStudentView extends BasicMainView {
         filterNumberTextField.addValueChangeListener(event -> refresh());
 
         submitButton = new Button("Применить");
-        submitButton.setHeight("30px");
+        submitButton.setHeight("100%");
         submitButton.addClickListener(event -> refresh());
 
         filterLayout.addComponents(filterLastNameTextField, filterNumberTextField, submitButton);

@@ -1,5 +1,7 @@
 package com.haulmont.testtask.model.entity;
 
+import java.util.Objects;
+
 public class Group implements Entity {
     private Long id;
     private Integer number;
@@ -39,5 +41,29 @@ public class Group implements Entity {
 
     public void setFaculty(String faculty) {
         this.faculty = faculty;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", number=" + number +
+                ", faculty='" + faculty + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return Objects.equals(id, group.id) &&
+                Objects.equals(number, group.number) &&
+                Objects.equals(faculty, group.faculty);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, faculty);
     }
 }

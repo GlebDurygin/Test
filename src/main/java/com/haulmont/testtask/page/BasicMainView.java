@@ -1,5 +1,6 @@
 package com.haulmont.testtask.page;
 
+import com.haulmont.testtask.exception.service.ServiceException;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -22,9 +23,11 @@ abstract class BasicMainView extends VerticalLayout implements View {
         table.setNullSelectionAllowed(false);
         table.setSelectable(true);
         table.setImmediate(true);
-        table.setSizeFull();
+        //table.setSizeFull();
+        table.setWidth("100%");
 
         buttonsLayout = new HorizontalLayout();
+        buttonsLayout.setHeight("30px");
 
         addButton = new Button("Добавить");
         editButton = new Button("Редактировать");
@@ -32,13 +35,16 @@ abstract class BasicMainView extends VerticalLayout implements View {
         editButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
-        buttonsLayout.addComponents(addButton,editButton,deleteButton);
-        setMargin(true);
+        buttonsLayout.addComponents(addButton, editButton, deleteButton);
+        //buttonsLayout.setSizeFull();
+        buttonsLayout.setSpacing(false);
+        setMargin(false);
         setSpacing(false);
-        addComponents(table,buttonsLayout);
-        setExpandRatio(table,1.0f);
     }
+
     protected abstract void setTable();
+
+    protected abstract void refresh();
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

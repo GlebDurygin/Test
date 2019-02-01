@@ -2,6 +2,7 @@ package com.haulmont.testtask.model.entity;
 
 
 import java.sql.Date;
+import java.util.Objects;
 
 public class Student implements Entity {
     private Long id;
@@ -9,19 +10,19 @@ public class Student implements Entity {
     private String lastName;
     private String middleName;
     private Date birthDate;
-    private Group group;
+    private Long groupId;
 
     public Student() {
 
     }
 
-    public Student(Long id, String firstName, String LastName, String MiddleName, Date birthDate, Group group) {
+    public Student(Long id, String firstName, String LastName, String MiddleName, Date birthDate, Long groupId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = LastName;
         this.middleName = MiddleName;
         this.birthDate = birthDate;
-        this.group = group;
+        this.groupId = groupId;
     }
 
     @Override
@@ -66,11 +67,41 @@ public class Student implements Entity {
         this.birthDate = birthDate;
     }
 
-    public Group getGroup() {
-        return group;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", birthDate=" + birthDate +
+                ", group=" + groupId +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) &&
+                Objects.equals(firstName, student.firstName) &&
+                Objects.equals(lastName, student.lastName) &&
+                Objects.equals(middleName, student.middleName) &&
+                Objects.equals(birthDate, student.birthDate) &&
+                Objects.equals(groupId, student.groupId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, middleName, birthDate, groupId);
     }
 }

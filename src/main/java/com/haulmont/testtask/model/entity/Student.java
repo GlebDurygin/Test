@@ -1,8 +1,6 @@
 package com.haulmont.testtask.model.entity;
 
-
 import java.sql.Date;
-import java.util.Objects;
 
 public class Student implements Entity {
     private Long id;
@@ -75,33 +73,4 @@ public class Student implements Entity {
         this.groupId = groupId;
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", birthDate=" + birthDate +
-                ", group=" + groupId +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return Objects.equals(id, student.id) &&
-                Objects.equals(firstName, student.firstName) &&
-                Objects.equals(lastName, student.lastName) &&
-                Objects.equals(middleName, student.middleName) &&
-                Objects.equals(birthDate, student.birthDate) &&
-                Objects.equals(groupId, student.groupId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, firstName, lastName, middleName, birthDate, groupId);
-    }
 }

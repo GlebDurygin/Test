@@ -4,8 +4,8 @@ import com.haulmont.testtask.database.impl.HSQLDBDaoManager;
 import com.haulmont.testtask.database.impl.HSQLDBGroupDao;
 import com.haulmont.testtask.database.impl.HSQLDBStudentDao;
 import com.haulmont.testtask.exception.service.ServiceException;
-import com.haulmont.testtask.model.container.GroupContainer;
-import com.haulmont.testtask.model.container.StudentContainer;
+import com.haulmont.testtask.container.GroupContainer;
+import com.haulmont.testtask.container.StudentContainer;
 import com.haulmont.testtask.model.entity.Group;
 import com.haulmont.testtask.model.entity.Student;
 
@@ -127,7 +127,7 @@ public class Service {
 
     public boolean deleteGroup(Long id) throws ServiceException {
         try {
-            if (studentContainer.studentsInGroup(id).size() == 0) {
+            if (studentContainer.getStudentsByGroup(id).size() == 0) {
                 hsqldbGroupDao.delete(id);
                 groupContainer.removeGroup(id);
                 return true;

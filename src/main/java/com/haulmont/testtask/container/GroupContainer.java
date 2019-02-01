@@ -1,4 +1,4 @@
-package com.haulmont.testtask.model.container;
+package com.haulmont.testtask.container;
 
 import com.haulmont.testtask.model.entity.Group;
 
@@ -14,11 +14,7 @@ public class GroupContainer {
     public void addGroup(Group group) {
         groups.put(group.getId(),group);
     }
-
-    public void removeGroup(Group group) {
-        groups.remove(group.getId());
-    }
-
+    
     public void removeGroup(Long id) {
         groups.remove(id);
     }

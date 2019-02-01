@@ -1,8 +1,8 @@
 package com.haulmont.testtask.database.impl;
 
 import com.haulmont.testtask.database.dao.GroupDao;
-import com.haulmont.testtask.exception.database.hsqldbdao.DataBaseConnectionException;
-import com.haulmont.testtask.exception.database.hsqldbdao.NotFoundDriverException;
+import com.haulmont.testtask.exception.database.impl.DataBaseConnectionException;
+import com.haulmont.testtask.exception.database.impl.DriverNotFoundException;
 import com.haulmont.testtask.model.entity.Group;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ public class HSQLDBGroupDao implements GroupDao {
     public HSQLDBGroupDao() {
         try {
             connection = HSQLDBConnection.getConnection();
-        } catch (NotFoundDriverException | DataBaseConnectionException e) {
+        } catch (DriverNotFoundException | DataBaseConnectionException e) {
             e.printStackTrace();
         }
     }

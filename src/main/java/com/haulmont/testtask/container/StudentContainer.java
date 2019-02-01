@@ -1,8 +1,9 @@
-package com.haulmont.testtask.model.container;
+package com.haulmont.testtask.container;
 
 import com.haulmont.testtask.model.entity.Student;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StudentContainer {
     private Map<Long, Student> students;
@@ -12,11 +13,7 @@ public class StudentContainer {
     }
 
     public void addStudent(Student student) {
-        students.put(student.getId(),student);
-    }
-
-    public void removeStudent(Student student) {
-        students.remove(student.getId());
+        students.put(student.getId(), student);
     }
 
     public void removeStudent(Long id) {
@@ -28,7 +25,7 @@ public class StudentContainer {
     }
 
     public void updateStudent(Student student) {
-        students.replace(student.getId(),students.get(student.getId()),student);
+        students.replace(student.getId(), students.get(student.getId()), student);
     }
 
     public List<Student> getStudents() {
@@ -36,12 +33,7 @@ public class StudentContainer {
         return Collections.unmodifiableList(list);
     }
 
-    public List<Student> studentsInGroup(Long id){
-        List<Student> list = new ArrayList<>();
-        for (Student student : students.values()) {
-            if (student.getGroupId() == id)
-                list.add(student);
-        }
-        return list;
+    public List<Student> getStudentsByGroup(Long id) {
+        return students.values().stream().filter(student -> student.getGroupId().equals(id)).collect(Collectors.toList());
     }
 }

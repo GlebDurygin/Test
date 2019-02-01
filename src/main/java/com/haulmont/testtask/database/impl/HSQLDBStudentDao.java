@@ -1,8 +1,8 @@
 package com.haulmont.testtask.database.impl;
 
 import com.haulmont.testtask.database.dao.StudentDao;
-import com.haulmont.testtask.exception.database.hsqldbdao.DataBaseConnectionException;
-import com.haulmont.testtask.exception.database.hsqldbdao.NotFoundDriverException;
+import com.haulmont.testtask.exception.database.impl.DataBaseConnectionException;
+import com.haulmont.testtask.exception.database.impl.DriverNotFoundException;
 import com.haulmont.testtask.model.entity.Student;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ public class HSQLDBStudentDao implements StudentDao {
     public HSQLDBStudentDao() {
         try {
             connection = HSQLDBConnection.getConnection();
-        } catch (NotFoundDriverException | DataBaseConnectionException e) {
+        } catch (DriverNotFoundException | DataBaseConnectionException e) {
             e.printStackTrace();
         }
     }

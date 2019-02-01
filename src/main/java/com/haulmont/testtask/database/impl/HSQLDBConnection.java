@@ -1,7 +1,7 @@
 package com.haulmont.testtask.database.impl;
 
-import com.haulmont.testtask.exception.database.hsqldbdao.DataBaseConnectionException;
-import com.haulmont.testtask.exception.database.hsqldbdao.NotFoundDriverException;
+import com.haulmont.testtask.exception.database.impl.DataBaseConnectionException;
+import com.haulmont.testtask.exception.database.impl.DriverNotFoundException;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,19 +14,19 @@ public class HSQLDBConnection {
 
     private static Connection connection;
 
-    private static void buildConnection() throws DataBaseConnectionException, NotFoundDriverException {
+    private static void buildConnection() throws DataBaseConnectionException, DriverNotFoundException {
         try {
             Class.forName(HSQLDB_DRIVER);
             connection = DriverManager.getConnection(HSQLDB_URL, HSQLDB_USERNAME, HSQLDB_PASSWORD);
             initDatabase();
         } catch (ClassNotFoundException e) {
-            throw new NotFoundDriverException(HSQLDBErrorConstants.DRIVER_ERROR);
+            throw new DriverNotFoundException(HSQLDBErrorConstants.DRIVER_ERROR);
         } catch (SQLException e) {
             throw new DataBaseConnectionException(HSQLDBErrorConstants.CONNECTION_ERROR);
         }
     }
 
-    public static Connection getConnection() throws DataBaseConnectionException, NotFoundDriverException {
+    public static Connection getConnection() throws DataBaseConnectionException, DriverNotFoundException {
         if (connection == null) buildConnection();
         return connection;
     }

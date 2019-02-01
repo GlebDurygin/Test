@@ -1,4 +1,4 @@
-package com.haulmont.testtask.exception.database.hsqldbdao;
+package com.haulmont.testtask.exception.database.impl;
 
 public class DataBaseConnectionException extends Exception {
     public DataBaseConnectionException() {

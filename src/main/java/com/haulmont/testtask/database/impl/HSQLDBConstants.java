@@ -1,9 +1,8 @@
-package com.haulmont.testtask.database.hsqldbdao;
+package com.haulmont.testtask.database.impl;
 
 public class HSQLDBConstants {
     public static final String
             HSQLDB_DRIVER = "org.hsqldb.jdbc.JDBCDriver",
-            //HSQLDB_URL = "jdbc:hsqldb:file:C:/Users/Gleb Durygin/Documents/IdeaProjects/Test-Task/database/hsqldb/",
             HSQLDB_URL = "jdbc:hsqldb:file:~/data/hsqldb/",
             HSQLDB_USERNAME = "SA",
             HSQLDB_PASSWORD = "",

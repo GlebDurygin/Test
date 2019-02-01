@@ -17,7 +17,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.*;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class ModalStudentWindow extends BasicModalWindow<Student> {
     private static Logger logger = Logger.getLogger(ModalStudentWindow.class.getName());

@@ -1,8 +1,8 @@
 package com.haulmont.testtask.service;
 
-import com.haulmont.testtask.database.hsqldbdao.HSQLDBDaoManager;
-import com.haulmont.testtask.database.hsqldbdao.HSQLDBGroupDao;
-import com.haulmont.testtask.database.hsqldbdao.HSQLDBStudentDao;
+import com.haulmont.testtask.database.impl.HSQLDBDaoManager;
+import com.haulmont.testtask.database.impl.HSQLDBGroupDao;
+import com.haulmont.testtask.database.impl.HSQLDBStudentDao;
 import com.haulmont.testtask.exception.service.ServiceException;
 import com.haulmont.testtask.model.container.GroupContainer;
 import com.haulmont.testtask.model.container.StudentContainer;

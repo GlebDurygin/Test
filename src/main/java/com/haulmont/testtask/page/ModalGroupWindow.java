@@ -7,13 +7,12 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
 import java.util.logging.Logger;
 
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.*;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class ModalGroupWindow extends BasicModalWindow<Group> {
     private static Logger logger = Logger.getLogger(ModalGroupWindow.class.getName());

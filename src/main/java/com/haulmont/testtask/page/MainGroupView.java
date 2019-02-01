@@ -8,8 +8,8 @@ import com.vaadin.ui.*;
 
 import java.util.logging.Logger;
 
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.TABLE_GROUP_FACULTY;
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.TABLE_GROUP_NUMBER;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.TABLE_GROUP_FACULTY;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.TABLE_GROUP_NUMBER;
 
 
 public class MainGroupView extends BasicMainView {

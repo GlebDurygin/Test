@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.*;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class MainStudentView extends BasicMainView {
     private static Logger logger = Logger.getLogger(MainStudentView.class.getName());

@@ -1,4 +1,4 @@
-package com.haulmont.testtask.database.hsqldbdao;
+package com.haulmont.testtask.database.impl;
 
 import com.haulmont.testtask.exception.database.hsqldbdao.DataBaseConnectionException;
 import com.haulmont.testtask.exception.database.hsqldbdao.NotFoundDriverException;
@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.Scanner;
 
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.*;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class HSQLDBConnection {
 
@@ -19,7 +19,6 @@ public class HSQLDBConnection {
             Class.forName(HSQLDB_DRIVER);
             connection = DriverManager.getConnection(HSQLDB_URL, HSQLDB_USERNAME, HSQLDB_PASSWORD);
             initDatabase();
-            //return connect;
         } catch (ClassNotFoundException e) {
             throw new NotFoundDriverException(HSQLDBErrorConstants.DRIVER_ERROR);
         } catch (SQLException e) {
@@ -30,17 +29,6 @@ public class HSQLDBConnection {
     public static Connection getConnection() throws DataBaseConnectionException, NotFoundDriverException {
         if (connection == null) buildConnection();
         return connection;
-    }
-
-    public static void closeConnection() throws DataBaseConnectionException {
-        try {
-            if (connection != null) {
-                Statement statement = connection.createStatement();
-                statement.execute("SHUTDOWN");
-            }
-        } catch (SQLException e) {
-            throw new DataBaseConnectionException(HSQLDBErrorConstants.CLOSE_DB_ERROR);
-        }
     }
 
     private static void initDatabase() throws SQLException, DataBaseConnectionException {

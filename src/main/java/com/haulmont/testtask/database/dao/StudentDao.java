@@ -7,13 +7,11 @@ import java.util.List;
 
 public interface StudentDao {
 
-    public Long insert(Student clazz) throws SQLException;
+    Long insert(Student student) throws SQLException;
 
-    public Student getById(Long id) throws SQLException;
+    void delete(Long id) throws SQLException;
 
-    public void delete(Long id) throws SQLException;
+    void update(Student student) throws SQLException;
 
-    public void update(Student clazz) throws SQLException;
-
-    public List<Student> getAll() throws SQLException;
+    List<Student> getAll() throws SQLException;
 }

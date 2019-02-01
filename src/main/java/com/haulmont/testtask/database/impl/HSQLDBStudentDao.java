@@ -1,4 +1,4 @@
-package com.haulmont.testtask.database.hsqldbdao;
+package com.haulmont.testtask.database.impl;
 
 import com.haulmont.testtask.database.dao.StudentDao;
 import com.haulmont.testtask.exception.database.hsqldbdao.DataBaseConnectionException;
@@ -9,70 +9,56 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.haulmont.testtask.database.hsqldbdao.HSQLDBConstants.*;
+import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class HSQLDBStudentDao implements StudentDao {
     private Connection connection;
 
+    public HSQLDBStudentDao() {
+        try {
+            connection = HSQLDBConnection.getConnection();
+        } catch (NotFoundDriverException | DataBaseConnectionException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
-    public Long insert(Student clazz) throws SQLException {
+    public Long insert(Student student) throws SQLException {
         String sql = "INSERT INTO " + TABLE_STUDENT + " (" + TABLE_STUDENT_FIRST_NAME + ", "
                 + TABLE_STUDENT_LAST_NAME + ", "
                 + TABLE_STUDENT_MIDDLE_NAME + ", "
                 + TABLE_STUDENT_BIRTHDATE + ", "
                 + TABLE_STUDENT_GROUP_ID + ") values (?,?,?,?,?);";
         try {
-            connection = HSQLDBConnection.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, clazz.getFirstName());
-            preparedStatement.setString(2, clazz.getLastName());
-            preparedStatement.setString(3, clazz.getMiddleName());
-            preparedStatement.setDate(4, clazz.getBirthDate());
-            preparedStatement.setLong(5, clazz.getGroupId());
+            preparedStatement.setString(1, student.getFirstName());
+            preparedStatement.setString(2, student.getLastName());
+            preparedStatement.setString(3, student.getMiddleName());
+            preparedStatement.setDate(4, student.getBirthDate());
+            preparedStatement.setLong(5, student.getGroupId());
             preparedStatement.executeUpdate();
-            return getStudentId(clazz);
-        } catch (SQLException | NotFoundDriverException | DataBaseConnectionException e) {
+            return getStudentId(student);
+        } catch (SQLException e) {
             throw new SQLException(HSQLDBErrorConstants.INSERT_ERROR + e.getMessage());
         }
     }
 
-    public Long getStudentId(Student clazz) throws SQLException {
+    public Long getStudentId(Student student) throws SQLException {
         String sql = "SELECT * FROM " + TABLE_STUDENT + " WHERE " + TABLE_STUDENT_FIRST_NAME + " = ? AND " +
                 TABLE_STUDENT_LAST_NAME + " = ? AND " + TABLE_STUDENT_MIDDLE_NAME + " = ? AND " +
                 TABLE_STUDENT_BIRTHDATE + " = ? AND " + TABLE_STUDENT_GROUP_ID + " = ?;";
         try {
-            connection = HSQLDBConnection.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, clazz.getFirstName());
-            preparedStatement.setString(2, clazz.getLastName());
-            preparedStatement.setString(3, clazz.getMiddleName());
-            preparedStatement.setDate(4, clazz.getBirthDate());
-            preparedStatement.setLong(5, clazz.getGroupId());
+            preparedStatement.setString(1, student.getFirstName());
+            preparedStatement.setString(2, student.getLastName());
+            preparedStatement.setString(3, student.getMiddleName());
+            preparedStatement.setDate(4, student.getBirthDate());
+            preparedStatement.setLong(5, student.getGroupId());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
                 return resultSet.getLong(TABLE_STUDENT_ID);
             else return null;
-        } catch (SQLException | NotFoundDriverException | DataBaseConnectionException e) {
-            throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
-        }
-    }
-
-    @Override
-    public Student getById(Long id) throws SQLException {
-        Student student = new Student();
-        String sql = "SELECT * FROM " + TABLE_STUDENT + " WHERE " + TABLE_STUDENT_ID + " = ?;";
-        try {
-            connection = HSQLDBConnection.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            student.setFirstName(resultSet.getString(TABLE_STUDENT_FIRST_NAME));
-            student.setLastName(resultSet.getString(TABLE_STUDENT_LAST_NAME));
-            student.setMiddleName(resultSet.getString(TABLE_STUDENT_MIDDLE_NAME));
-            student.setBirthDate(resultSet.getDate(TABLE_STUDENT_BIRTHDATE));
-            student.setGroupId(resultSet.getLong(TABLE_STUDENT_GROUP_ID));
-            return student;
-        } catch (SQLException | NotFoundDriverException | DataBaseConnectionException e) {
+        } catch (SQLException e) {
             throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }
@@ -81,33 +67,31 @@ public class HSQLDBStudentDao implements StudentDao {
     public void delete(Long id) throws SQLException {
         String sql = "DELETE FROM " + TABLE_STUDENT + " WHERE " + TABLE_STUDENT_ID + " = ?;";
         try {
-            connection = HSQLDBConnection.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-        } catch (SQLException | NotFoundDriverException | DataBaseConnectionException e) {
+        } catch (SQLException e) {
             throw new SQLException(HSQLDBErrorConstants.DELETE_ERROR + e.getMessage());
         }
     }
 
     @Override
-    public void update(Student clazz) throws SQLException {
+    public void update(Student student) throws SQLException {
         String sql = "UPDATE " + TABLE_STUDENT + " SET " + TABLE_STUDENT_FIRST_NAME + " = ?, "
                 + TABLE_STUDENT_LAST_NAME + " = ?, "
                 + TABLE_STUDENT_MIDDLE_NAME + " = ?, "
                 + TABLE_STUDENT_BIRTHDATE + " = ?, "
                 + TABLE_STUDENT_GROUP_ID + " = ? WHERE " + TABLE_STUDENT_ID + " = ?;";
         try {
-            connection = HSQLDBConnection.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, clazz.getFirstName());
-            preparedStatement.setString(2, clazz.getLastName());
-            preparedStatement.setString(3, clazz.getMiddleName());
-            preparedStatement.setDate(4, clazz.getBirthDate());
-            preparedStatement.setLong(5, clazz.getGroupId());
-            preparedStatement.setLong(6, clazz.getId());
+            preparedStatement.setString(1, student.getFirstName());
+            preparedStatement.setString(2, student.getLastName());
+            preparedStatement.setString(3, student.getMiddleName());
+            preparedStatement.setDate(4, student.getBirthDate());
+            preparedStatement.setLong(5, student.getGroupId());
+            preparedStatement.setLong(6, student.getId());
             preparedStatement.executeUpdate();
-        } catch (SQLException | NotFoundDriverException | DataBaseConnectionException e) {
+        } catch (SQLException e) {
             throw new SQLException(HSQLDBErrorConstants.UPDATE_ERROR + e.getMessage());
         }
     }
@@ -117,7 +101,6 @@ public class HSQLDBStudentDao implements StudentDao {
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE_STUDENT + ";";
         try {
-            connection = HSQLDBConnection.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -130,7 +113,7 @@ public class HSQLDBStudentDao implements StudentDao {
                 students.add(student);
             }
             return students;
-        } catch (SQLException | NotFoundDriverException | DataBaseConnectionException e) {
+        } catch (SQLException e) {
             throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }

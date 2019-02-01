@@ -138,7 +138,9 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
         for (Group group : groups) {
             groupComboBox.addItem(group);
             groupComboBox.setItemCaption(group, group.getNumber().toString());
-            if (number.equals(group.getNumber()) || number == null) {
+            if (number == null) {
+                groupComboBox.select(group);
+            } else if (number.equals(group.getNumber())) {
                 groupComboBox.select(group);
             }
         }

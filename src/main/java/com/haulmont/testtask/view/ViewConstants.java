@@ -1,6 +1,6 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
-public class PageConstants {
+public class ViewConstants {
     public static final String
             MAIN_PAGE = "",
             GROUPS_PAGE = "groups",

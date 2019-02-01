@@ -11,17 +11,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class HSQLDBGroupDao implements GroupDao {
     private Connection connection;
 
+    private Logger logger = Logger.getLogger(HSQLDBGroupDao.class.getName());
+
     public HSQLDBGroupDao() {
         try {
             connection = HSQLDBConnection.getConnection();
         } catch (DriverNotFoundException | DataBaseConnectionException e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
         }
     }
 
@@ -35,7 +38,25 @@ public class HSQLDBGroupDao implements GroupDao {
             preparedStatement.executeUpdate();
             return getGroupId(group);
         } catch (SQLException e) {
+            logger.severe(HSQLDBErrorConstants.INSERT_ERROR + e.getMessage());
             throw new SQLException(HSQLDBErrorConstants.INSERT_ERROR + e.getMessage());
+        }
+    }
+
+    public Group getById(Long id) throws SQLException {
+        Group group = new Group();
+        String sql = "SELECT * FROM " + TABLE_GROUP + " WHERE " + TABLE_GROUP_ID + " = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            group.setId(resultSet.getLong(TABLE_GROUP_ID));
+            group.setNumber(resultSet.getInt(TABLE_GROUP_NUMBER));
+            group.setFaculty(resultSet.getString(TABLE_GROUP_FACULTY));
+            return group;
+        } catch (SQLException e) {
+            logger.severe(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
+            throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }
 
@@ -46,10 +67,10 @@ public class HSQLDBGroupDao implements GroupDao {
             preparedStatementSelect.setInt(1, group.getNumber());
             preparedStatementSelect.setString(2, group.getFaculty());
             ResultSet resultSet = preparedStatementSelect.executeQuery();
-            if (resultSet.next())
-                return resultSet.getLong(TABLE_GROUP_ID);
+            if (resultSet.next()) return resultSet.getLong(TABLE_GROUP_ID);
             else return null;
         } catch (SQLException e) {
+            logger.severe(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
             throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }
@@ -62,6 +83,7 @@ public class HSQLDBGroupDao implements GroupDao {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            logger.severe(HSQLDBErrorConstants.DELETE_ERROR + e.getMessage());
             throw new SQLException(HSQLDBErrorConstants.DELETE_ERROR + e.getMessage());
         }
     }
@@ -76,6 +98,7 @@ public class HSQLDBGroupDao implements GroupDao {
             preparedStatement.setLong(3, group.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            logger.severe(HSQLDBErrorConstants.UPDATE_ERROR + e.getMessage());
             throw new SQLException(HSQLDBErrorConstants.UPDATE_ERROR + e.getMessage());
         }
     }
@@ -95,6 +118,7 @@ public class HSQLDBGroupDao implements GroupDao {
             }
             return groups;
         } catch (SQLException e) {
+            logger.severe(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
             throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }

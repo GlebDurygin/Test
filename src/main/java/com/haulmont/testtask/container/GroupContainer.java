@@ -14,7 +14,7 @@ public class GroupContainer {
     public void addGroup(Group group) {
         groups.put(group.getId(),group);
     }
-    
+
     public void removeGroup(Long id) {
         groups.remove(id);
     }

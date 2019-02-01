@@ -1,8 +1,8 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.exception.service.ServiceException;
 import com.haulmont.testtask.model.entity.Student;
-import com.haulmont.testtask.service.Service;
+import com.haulmont.testtask.service.GroupService;
+import com.haulmont.testtask.service.StudentService;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -12,21 +12,26 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class MainStudentView extends BasicMainView {
-    private static Logger logger = Logger.getLogger(MainStudentView.class.getName());
     private HorizontalLayout filterLayout;
     private Button submitButton;
     private TextField filterLastNameTextField;
     private TextField filterNumberTextField;
 
+    private StudentService studentService;
+    private GroupService groupService;
+
     public MainStudentView() {
         super();
+
+        studentService = StudentService.getInstance();
+        groupService = GroupService.getInstance();
+
         setFilterLayout();
-        setTable();
+        init();
         refresh();
     }
 
@@ -48,14 +53,19 @@ public class MainStudentView extends BasicMainView {
 
         filterLayout.addComponents(filterLastNameTextField, filterNumberTextField, submitButton);
         filterLayout.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-        filterNumberTextField.setSizeFull();
-        addComponents(filterLayout, table, buttonsLayout);
         filterLayout.setHeight("50px");
         table.setHeight("500px");
+
+        addComponents(filterLayout, table, buttonsLayout);
     }
 
     @Override
-    protected void setTable() {
+    protected void init() {
+        setTable();
+        setClickListeners();
+    }
+
+    private void setTable() {
         table.addContainerProperty(TABLE_STUDENT_LAST_NAME, String.class, null, "Фамилия", null, Table.Align.LEFT);
         table.addContainerProperty(TABLE_STUDENT_FIRST_NAME, String.class, null, "Имя", null, Table.Align.LEFT);
         table.addContainerProperty(TABLE_STUDENT_MIDDLE_NAME, String.class, null, "Отчество", null, Table.Align.LEFT);
@@ -80,11 +90,14 @@ public class MainStudentView extends BasicMainView {
 
         table.addItemClickListener(event -> {
             if (event.isDoubleClick()) {
-                if (event.getItemId() != null)
+                if (event.getItemId() != null) {
                     getUI().addWindow(new ModalStudentWindow(table.getItem(table.getValue()), (Long) table.getValue()));
+                }
             }
         });
+    }
 
+    private void setClickListeners() {
         addButton.addClickListener(event -> {
             ModalStudentWindow modalStudentWindow = new ModalStudentWindow();
             modalStudentWindow.addCloseListener((Window.CloseListener) e -> refresh());
@@ -96,30 +109,22 @@ public class MainStudentView extends BasicMainView {
             getUI().addWindow(modalStudentWindow);
         });
         deleteButton.addClickListener(event -> {
-            try {
-                Service.getInstance().deleteStudent((Long) table.getValue());
-                refresh();
-            } catch (ServiceException e) {
-                logger.severe(e.getMessage());
-            }
+            studentService.deleteStudent((Long) table.getValue());
+            refresh();
         });
     }
 
     @Override
     protected void refresh() {
         table.removeAllItems();
-        try {
-            for (Student s : Service.getInstance().getStudents(filterLastNameTextField.getValue(), filterNumberTextField.getValue())) {
-                table.addItem(new Object[]{
-                        s.getLastName(),
-                        s.getFirstName(),
-                        s.getMiddleName(),
-                        s.getBirthDate(),
-                        Service.getInstance().getGroup(s.getGroupId()).getNumber()
-                }, s.getId());
-            }
-        } catch (ServiceException e) {
-            logger.severe(e.getMessage());
+        for (Student s : studentService.getStudents(filterLastNameTextField.getValue(), filterNumberTextField.getValue())) {
+            table.addItem(new Object[]{
+                    s.getLastName(),
+                    s.getFirstName(),
+                    s.getMiddleName(),
+                    s.getBirthDate(),
+                    groupService.getGroup(s.getGroupId()).getNumber()
+            }, s.getId());
         }
     }
 

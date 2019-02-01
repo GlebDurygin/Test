@@ -1,9 +1,9 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.exception.service.ServiceException;
 import com.haulmont.testtask.model.entity.Group;
 import com.haulmont.testtask.model.entity.Student;
-import com.haulmont.testtask.service.Service;
+import com.haulmont.testtask.service.GroupService;
+import com.haulmont.testtask.service.StudentService;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.NullValidator;
@@ -15,31 +15,32 @@ import com.vaadin.ui.TextField;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class ModalStudentWindow extends BasicModalWindow<Student> {
-    private static Logger logger = Logger.getLogger(ModalStudentWindow.class.getName());
     private TextField lastNameTextField;
     private TextField firstNameTextField;
     private TextField middleNameTextField;
     private DateField birthDateField;
     private ComboBox groupComboBox;
 
+    private StudentService studentService;
+    private GroupService groupService;
+
     public ModalStudentWindow() {
         super();
+        studentService = StudentService.getInstance();
+        groupService = GroupService.getInstance();
         setCaption("Добавление студента");
         fillGroupComboBox(null);
+
         okButton.addClickListener(event -> {
             if (validate()) {
-                try {
-                    if (Service.getInstance().insertStudent(convertFormToObject()))
-                        close();
-                    else
-                        Notification.show("Такой студент уже существует", Notification.Type.ERROR_MESSAGE);
-                } catch (ServiceException e) {
-                    logger.severe(e.getMessage());
+                if (studentService.insertStudent(convertFormToObject())) {
+                    close();
+                } else {
+                    Notification.show("Такой студент уже существует", Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -48,20 +49,20 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
 
     public ModalStudentWindow(Item item, Long id) {
         super();
+        studentService = StudentService.getInstance();
+        groupService = GroupService.getInstance();
         setCaption("Редактирование студента");
+
         lastNameTextField.setValue(String.valueOf(item.getItemProperty(TABLE_STUDENT_LAST_NAME).getValue()));
         firstNameTextField.setValue(String.valueOf(item.getItemProperty(TABLE_STUDENT_FIRST_NAME).getValue()));
         middleNameTextField.setValue(String.valueOf(item.getItemProperty(TABLE_STUDENT_MIDDLE_NAME).getValue()));
         birthDateField.setValue((Date) (item.getItemProperty(TABLE_STUDENT_BIRTHDATE).getValue()));
-        fillGroupComboBox((Integer)item.getItemProperty(TABLE_GROUP_NUMBER).getValue());
+        fillGroupComboBox((Integer) item.getItemProperty(TABLE_GROUP_NUMBER).getValue());
+
         okButton.addClickListener(event -> {
             if (validate()) {
-                try {
-                    Service.getInstance().updateStudent(convertFormToObject(id));
-                    close();
-                } catch (ServiceException e) {
-                    logger.severe(e.getMessage());
-                }
+                studentService.updateStudent(convertFormToObject(id));
+                close();
             }
         });
     }
@@ -74,6 +75,17 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
         setResizable(false);
         setDraggable(false);
 
+        initLastNameTextField();
+        initFirstNameTextField();
+        initMiddleNameTextField();
+        initBirthDateField();
+        initGroupComboBox();
+
+        formLayout.addComponents(lastNameTextField, firstNameTextField, middleNameTextField, birthDateField, groupComboBox);
+        setContent(mainLayout);
+    }
+
+    private void initLastNameTextField() {
         lastNameTextField = new TextField("Фамилия");
         lastNameTextField.setRequired(true);
         lastNameTextField.setWidth("100%");
@@ -81,7 +93,9 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
         lastNameTextField.setMaxLength(30);
         lastNameTextField.setImmediate(true);
         lastNameTextField.addValidator(new RegexpValidator("^[a-zA-ZА-ЯЁа-яё]{1,30}$", false, "Фамилия может содержать только буквы"));
+    }
 
+    private void initFirstNameTextField() {
         firstNameTextField = new TextField("Имя");
         firstNameTextField.setRequired(true);
         firstNameTextField.setWidth("100%");
@@ -89,19 +103,25 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
         firstNameTextField.setMaxLength(30);
         firstNameTextField.setImmediate(true);
         firstNameTextField.addValidator(new RegexpValidator("^[a-zA-ZА-ЯЁа-яё]{1,30}$", false, "Имя может содержать только буквы"));
+    }
 
+    private void initMiddleNameTextField() {
         middleNameTextField = new TextField("Отчество (если есть)");
         middleNameTextField.setWidth("100%");
         middleNameTextField.setMaxLength(30);
         middleNameTextField.setImmediate(true);
         middleNameTextField.addValidator(new RegexpValidator("^[a-zA-ZА-ЯЁа-яё]{1,30}$", false, "Отчество может содержать только буквы"));
+    }
 
+    private void initBirthDateField() {
         birthDateField = new DateField("Дата рождения");
         birthDateField.setRequired(true);
         birthDateField.setWidth("100%");
         birthDateField.setRequiredError("Укажите дату рождения");
         birthDateField.setDateFormat("dd.MM.yyyy");
+    }
 
+    private void initGroupComboBox() {
         groupComboBox = new ComboBox("Номер группы");
         groupComboBox.setRequired(true);
         groupComboBox.setImmediate(true);
@@ -110,23 +130,17 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
         groupComboBox.setNullSelectionAllowed(false);
         groupComboBox.setTextInputAllowed(false);
         groupComboBox.setWidth("100%");
-
-        formLayout.addComponents(lastNameTextField, firstNameTextField, middleNameTextField, birthDateField, groupComboBox);
-        setContent(mainLayout);
     }
 
     private void fillGroupComboBox(Integer number) {
-        try {
-            groupComboBox.removeAllItems();
-            List<Group> groups = Service.getInstance().getGroups();
-            for (Group group : groups) {
-                groupComboBox.addItem(group);
-                groupComboBox.setItemCaption(group, group.getNumber().toString());
-                if (number == group.getNumber() || number == null)
-                    groupComboBox.select(group);
+        groupComboBox.removeAllItems();
+        List<Group> groups = groupService.getGroups();
+        for (Group group : groups) {
+            groupComboBox.addItem(group);
+            groupComboBox.setItemCaption(group, group.getNumber().toString());
+            if (number == group.getNumber() || number == null) {
+                groupComboBox.select(group);
             }
-        } catch (ServiceException e) {
-            logger.severe(e.getMessage());
         }
     }
 
@@ -158,7 +172,6 @@ public class ModalStudentWindow extends BasicModalWindow<Student> {
             groupComboBox.validate();
         } catch (Validator.InvalidValueException e) {
             Notification.show("Данные введены некорректно", Notification.Type.ERROR_MESSAGE);
-            logger.severe(e.getMessage());
             return false;
         }
         return true;

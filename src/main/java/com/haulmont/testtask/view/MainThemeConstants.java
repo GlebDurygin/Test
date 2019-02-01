@@ -1,4 +1,4 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
 public class MainThemeConstants {
     public static final String

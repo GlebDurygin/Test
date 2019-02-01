@@ -32,8 +32,7 @@ public class HSQLDBConnection {
     }
 
     private static void initDatabase() throws SQLException, DataBaseConnectionException {
-        if (!tableExists(TABLE_GROUP) || !tableExists(TABLE_STUDENT))
-            executeSqlStartScript(HSQLDB_SCRIPT_PATH);
+        if (!tableExists(TABLE_GROUP) || !tableExists(TABLE_STUDENT)) executeSqlStartScript(HSQLDB_SCRIPT_PATH);
     }
 
     private static boolean tableExists(String tableName) throws SQLException {
@@ -62,13 +61,13 @@ public class HSQLDBConnection {
                     statement = connection.createStatement();
                     statement.execute(scriptStatement);
                 } catch (SQLException e) {
-                    throw  new DataBaseConnectionException(HSQLDBErrorConstants.STATEMENT_ERROR);
+                    throw new DataBaseConnectionException(HSQLDBErrorConstants.STATEMENT_ERROR);
                 } finally {
                     if (statement != null) {
                         try {
                             statement.close();
                         } catch (SQLException e) {
-                            throw  new DataBaseConnectionException(HSQLDBErrorConstants.STATEMENT_ERROR);
+                            throw new DataBaseConnectionException(HSQLDBErrorConstants.STATEMENT_ERROR);
                         }
                     }
                     statement = null;
@@ -76,7 +75,7 @@ public class HSQLDBConnection {
             }
             scanner.close();
         } catch (FileNotFoundException | DataBaseConnectionException e) {
-            throw  new DataBaseConnectionException(HSQLDBErrorConstants.SCRIPT_ERROR);
+            throw new DataBaseConnectionException(HSQLDBErrorConstants.SCRIPT_ERROR);
         }
     }
 }

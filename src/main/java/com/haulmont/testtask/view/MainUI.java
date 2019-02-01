@@ -1,11 +1,11 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
 
-import static com.haulmont.testtask.page.PageConstants.*;
+import static com.haulmont.testtask.view.ViewConstants.*;
 
 @Theme(MainThemeConstants.THEME_NAME)
 public class MainUI extends UI {
@@ -17,15 +17,20 @@ public class MainUI extends UI {
     private VerticalLayout mainLayout;
     private HorizontalLayout headerLayout;
     private VerticalLayout viewLayout;
-    private VerticalLayout footerLayout;
+
+    private Navigator navigator;
 
     @Override
     protected void init(VaadinRequest request) {
-        headerLayout = new HorizontalLayout();
-        viewLayout = new VerticalLayout();
-        mainLayout = new VerticalLayout();
-        footerLayout = new VerticalLayout();
+        initHeaderLayout();
+        initViewLayout();
+        initMainLayout();
+        setContent(mainLayout);
+        initNavigator();
+    }
 
+    private void initHeaderLayout() {
+        headerLayout = new HorizontalLayout();
         headerLayout.setHeight("30px");
         headerLayout.setWidth("100%");
         headerLayout.setMargin(false);
@@ -34,27 +39,36 @@ public class MainUI extends UI {
         mainButton.addStyleName(MainThemeConstants.BORDERLESS);
         mainButton.setHeight("100%");
         mainButton.setData(MAIN_PAGE);
+
         groupsButton = new Button("Группы");
         groupsButton.addStyleName(MainThemeConstants.BORDERLESS);
         groupsButton.setHeight("100%");
         groupsButton.setData(GROUPS_PAGE);
+
         studentsButton = new Button("Студенты");
         studentsButton.addStyleName(MainThemeConstants.BORDERLESS);
         studentsButton.setHeight("100%");
         studentsButton.setData(STUDENTS_PAGE);
 
-        headerLayout.addComponents(mainButton,groupsButton,studentsButton);
-        mainLayout.addComponents(headerLayout,viewLayout);
-        mainLayout.setExpandRatio(viewLayout,1.0f);
-        mainLayout.setSizeFull();
-
+        headerLayout.addComponents(mainButton, groupsButton, studentsButton);
         headerLayout.setStyleName(MainThemeConstants.HEADER_LAYOUT);
+    }
+
+    private void initViewLayout() {
+        viewLayout = new VerticalLayout();
         viewLayout.setStyleName(MainThemeConstants.VIEW_LAYOUT);
+    }
+
+    private void initMainLayout() {
+        mainLayout = new VerticalLayout();
+        mainLayout.addComponents(headerLayout, viewLayout);
+        mainLayout.setExpandRatio(viewLayout, 1.0f);
+        mainLayout.setSizeFull();
         mainLayout.setStyleName(MainThemeConstants.MAIN_LAYOUT);
+    }
 
-        setContent(mainLayout);
-
-        Navigator navigator = new Navigator(this, viewLayout);
+    private void initNavigator() {
+        navigator = new Navigator(this, viewLayout);
         navigator.addView(MAIN_PAGE, new MainView());
         navigator.addView(GROUPS_PAGE, new MainGroupView());
         navigator.addView(STUDENTS_PAGE, new MainStudentView());

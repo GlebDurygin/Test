@@ -1,6 +1,5 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.exception.service.ServiceException;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -23,7 +22,6 @@ abstract class BasicMainView extends VerticalLayout implements View {
         table.setNullSelectionAllowed(false);
         table.setSelectable(true);
         table.setImmediate(true);
-        //table.setSizeFull();
         table.setWidth("100%");
 
         buttonsLayout = new HorizontalLayout();
@@ -36,13 +34,12 @@ abstract class BasicMainView extends VerticalLayout implements View {
         deleteButton.setEnabled(false);
 
         buttonsLayout.addComponents(addButton, editButton, deleteButton);
-        //buttonsLayout.setSizeFull();
         buttonsLayout.setSpacing(false);
         setMargin(false);
         setSpacing(false);
     }
 
-    protected abstract void setTable();
+    protected abstract void init();
 
     protected abstract void refresh();
 

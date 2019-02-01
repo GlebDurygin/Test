@@ -1,8 +1,7 @@
-package com.haulmont.testtask.page;
+package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.exception.service.ServiceException;
 import com.haulmont.testtask.model.entity.Group;
-import com.haulmont.testtask.service.Service;
+import com.haulmont.testtask.service.GroupService;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;
@@ -10,30 +9,25 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
-import java.util.logging.Logger;
-
 import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class ModalGroupWindow extends BasicModalWindow<Group> {
-    private static Logger logger = Logger.getLogger(ModalGroupWindow.class.getName());
     private TextField facultyTextField;
     private TextField numberTextField;
 
+    private GroupService groupService;
+
     public ModalGroupWindow() {
         super();
+        groupService = GroupService.getInstance();
         setCaption("Добавление группы");
+
         okButton.addClickListener(event -> {
             if (validate()) {
-                try {
-                    if (Service.getInstance().insertGroup(convertFormToObject()))
-                        close();
-                    else {
-                        Notification.show("Такая группа уже существует", Notification.Type.ERROR_MESSAGE);
-                        //notification.setStyleName(MainThemeConstants.THEME_NAME);
-                        //notification.show(Page.getCurrent());
-                    }
-                } catch (ServiceException e) {
-                    logger.severe(e.getMessage());
+                if (groupService.insertGroup(convertFormToObject())) {
+                    close();
+                } else {
+                    Notification.show("Такая группа уже существует", Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -41,17 +35,16 @@ public class ModalGroupWindow extends BasicModalWindow<Group> {
 
     public ModalGroupWindow(Item item, Long id) {
         super();
+        groupService = GroupService.getInstance();
         setCaption("Редактирование группы");
+
         facultyTextField.setValue(String.valueOf(item.getItemProperty(TABLE_GROUP_FACULTY).getValue()));
         numberTextField.setValue(String.valueOf(item.getItemProperty(TABLE_GROUP_NUMBER).getValue()));
+
         okButton.addClickListener(event -> {
             if (validate()) {
-                try {
-                    Service.getInstance().updateGroup(convertFormToObject(id));
-                    close();
-                } catch (ServiceException e) {
-                    logger.severe(e.getMessage());
-                }
+                groupService.updateGroup(convertFormToObject(id));
+                close();
             }
         });
     }
@@ -64,6 +57,14 @@ public class ModalGroupWindow extends BasicModalWindow<Group> {
         setResizable(false);
         setDraggable(false);
 
+        initFacultyTextField();
+        initNumberTextField();
+
+        formLayout.addComponents(facultyTextField, numberTextField);
+        setContent(mainLayout);
+    }
+
+    private void initFacultyTextField() {
         facultyTextField = new TextField("Название факультета");
         facultyTextField.setRequired(true);
         facultyTextField.setWidth("100%");
@@ -71,7 +72,9 @@ public class ModalGroupWindow extends BasicModalWindow<Group> {
         facultyTextField.setMaxLength(30);
         facultyTextField.setImmediate(true);
         facultyTextField.addValidator(new StringLengthValidator("Не более 30 символов", 1, 30, false));
+    }
 
+    private void initNumberTextField() {
         numberTextField = new TextField("Номер группы");
         numberTextField.setRequired(true);
         numberTextField.setWidth("100%");
@@ -79,8 +82,6 @@ public class ModalGroupWindow extends BasicModalWindow<Group> {
         numberTextField.setMaxLength(30);
         numberTextField.setImmediate(true);
         numberTextField.addValidator(new RegexpValidator("^\\d{1,5}$", false, "Номер группы должен содержать не болле 5 чисел"));
-        formLayout.addComponents(facultyTextField, numberTextField);
-        setContent(mainLayout);
     }
 
     @Override
@@ -101,7 +102,6 @@ public class ModalGroupWindow extends BasicModalWindow<Group> {
             facultyTextField.validate();
             numberTextField.validate();
         } catch (Validator.InvalidValueException e) {
-            logger.severe(e.getMessage());
             Notification.show("Данные введены некорректно", Notification.Type.ERROR_MESSAGE);
             return false;
         }

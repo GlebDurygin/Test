@@ -3,11 +3,12 @@ package com.haulmont.testtask.service;
 import com.haulmont.testtask.database.impl.HSQLDBDaoManager;
 import com.haulmont.testtask.database.impl.HSQLDBGroupDao;
 import com.haulmont.testtask.database.impl.HSQLDBStudentDao;
+import com.haulmont.testtask.exception.database.impl.DaoException;
+import com.haulmont.testtask.exception.service.ServiceException;
 import com.haulmont.testtask.model.entity.Group;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class GroupService {
     private HSQLDBDaoManager daoManager;
@@ -16,10 +17,17 @@ public class GroupService {
 
     private static GroupService instance;
 
+    private Logger logger = Logger.getLogger(GroupService.class.getName());
+
     private GroupService() {
-        daoManager = HSQLDBDaoManager.getInstance();
-        groupDao = (HSQLDBGroupDao) daoManager.getGroupDao();
-        studentDao = (HSQLDBStudentDao) daoManager.getStudentDao();
+        try {
+            daoManager = HSQLDBDaoManager.getInstance();
+            groupDao = (HSQLDBGroupDao) daoManager.getGroupDao();
+            studentDao = (HSQLDBStudentDao) daoManager.getStudentDao();
+        } catch (DaoException e) {
+            logger.severe(e.getMessage());
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     public static synchronized GroupService getInstance() {
@@ -33,8 +41,9 @@ public class GroupService {
                 groupDao.insert(group);
                 return true;
             }
-        } catch (SQLException e) {
-            return false;
+        } catch (DaoException e) {
+            logger.severe(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return false;
     }
@@ -45,8 +54,9 @@ public class GroupService {
                 groupDao.delete(id);
                 return true;
             }
-        } catch (SQLException e) {
-            return false;
+        } catch (DaoException e) {
+            logger.severe(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return false;
     }
@@ -54,8 +64,9 @@ public class GroupService {
     public boolean updateGroup(Group group) {
         try {
             groupDao.update(group);
-        } catch (SQLException e) {
-            return false;
+        } catch (DaoException e) {
+            logger.severe(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return true;
     }
@@ -63,16 +74,18 @@ public class GroupService {
     public Group getGroup(Long id) {
         try {
             return groupDao.getById(id);
-        } catch (SQLException e) {
-            return new Group();
+        } catch (DaoException e) {
+            logger.severe(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
     }
 
     public List<Group> getGroups() {
         try {
             return groupDao.getAll();
-        } catch (SQLException e) {
-            return new ArrayList<>();
+        } catch (DaoException e) {
+            logger.severe(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
     }
 }

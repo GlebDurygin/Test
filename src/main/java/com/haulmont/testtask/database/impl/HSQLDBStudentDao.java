@@ -1,6 +1,7 @@
 package com.haulmont.testtask.database.impl;
 
 import com.haulmont.testtask.database.dao.StudentDao;
+import com.haulmont.testtask.exception.database.impl.DaoException;
 import com.haulmont.testtask.exception.database.impl.DataBaseConnectionException;
 import com.haulmont.testtask.exception.database.impl.DriverNotFoundException;
 import com.haulmont.testtask.model.entity.Student;
@@ -8,24 +9,22 @@ import com.haulmont.testtask.model.entity.Student;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static com.haulmont.testtask.database.impl.HSQLDBConstants.*;
 
 public class HSQLDBStudentDao implements StudentDao {
     private Connection connection;
-    private Logger logger = Logger.getLogger(HSQLDBStudentDao.class.getName());
 
-    public HSQLDBStudentDao() {
+    public HSQLDBStudentDao() throws DaoException {
         try {
             connection = HSQLDBConnection.getConnection();
         } catch (DriverNotFoundException | DataBaseConnectionException e) {
-            logger.severe(e.getMessage());
+            throw new DaoException(e.getMessage());
         }
     }
 
     @Override
-    public Long insert(Student student) throws SQLException {
+    public Long insert(Student student) throws DaoException {
         String sql = "INSERT INTO " + TABLE_STUDENT + " (" + TABLE_STUDENT_FIRST_NAME + ", "
                 + TABLE_STUDENT_LAST_NAME + ", "
                 + TABLE_STUDENT_MIDDLE_NAME + ", "
@@ -41,12 +40,11 @@ public class HSQLDBStudentDao implements StudentDao {
             preparedStatement.executeUpdate();
             return getStudentId(student);
         } catch (SQLException e) {
-            logger.severe(HSQLDBErrorConstants.INSERT_ERROR + e.getMessage());
-            throw new SQLException(HSQLDBErrorConstants.INSERT_ERROR + e.getMessage());
+            throw new DaoException(HSQLDBErrorConstants.INSERT_ERROR + e.getMessage());
         }
     }
 
-    public Long getStudentId(Student student) throws SQLException {
+    public Long getStudentId(Student student) throws DaoException {
         String sql = "SELECT * FROM " + TABLE_STUDENT + " WHERE " + TABLE_STUDENT_FIRST_NAME + " = ? AND " +
                 TABLE_STUDENT_LAST_NAME + " = ? AND " + TABLE_STUDENT_MIDDLE_NAME + " = ? AND " +
                 TABLE_STUDENT_BIRTHDATE + " = ? AND " + TABLE_STUDENT_GROUP_ID + " = ?;";
@@ -61,26 +59,24 @@ public class HSQLDBStudentDao implements StudentDao {
             if (resultSet.next()) return resultSet.getLong(TABLE_STUDENT_ID);
             else return null;
         } catch (SQLException e) {
-            logger.severe(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
-            throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
+            throw new DaoException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }
 
     @Override
-    public void delete(Long id) throws SQLException {
+    public void delete(Long id) throws DaoException {
         String sql = "DELETE FROM " + TABLE_STUDENT + " WHERE " + TABLE_STUDENT_ID + " = ?;";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.severe(HSQLDBErrorConstants.DELETE_ERROR + e.getMessage());
-            throw new SQLException(HSQLDBErrorConstants.DELETE_ERROR + e.getMessage());
+            throw new DaoException(HSQLDBErrorConstants.DELETE_ERROR + e.getMessage());
         }
     }
 
     @Override
-    public void update(Student student) throws SQLException {
+    public void update(Student student) throws DaoException {
         String sql = "UPDATE " + TABLE_STUDENT + " SET " + TABLE_STUDENT_FIRST_NAME + " = ?, "
                 + TABLE_STUDENT_LAST_NAME + " = ?, "
                 + TABLE_STUDENT_MIDDLE_NAME + " = ?, "
@@ -96,13 +92,12 @@ public class HSQLDBStudentDao implements StudentDao {
             preparedStatement.setLong(6, student.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.severe(HSQLDBErrorConstants.UPDATE_ERROR + e.getMessage());
-            throw new SQLException(HSQLDBErrorConstants.UPDATE_ERROR + e.getMessage());
+            throw new DaoException(HSQLDBErrorConstants.UPDATE_ERROR + e.getMessage());
         }
     }
 
     @Override
-    public List<Student> getAll() throws SQLException {
+    public List<Student> getAll() throws DaoException {
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE_STUDENT + ";";
         try {
@@ -119,12 +114,11 @@ public class HSQLDBStudentDao implements StudentDao {
             }
             return students;
         } catch (SQLException e) {
-            logger.severe(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
-            throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
+            throw new DaoException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }
 
-    public List<Student> getStudentsByGroup(Long groupId) throws SQLException {
+    public List<Student> getStudentsByGroup(Long groupId) throws DaoException {
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM " + TABLE_STUDENT + " WHERE " + TABLE_STUDENT_GROUP_ID + " = ?;";
         try {
@@ -142,8 +136,7 @@ public class HSQLDBStudentDao implements StudentDao {
             }
             return students;
         } catch (SQLException e) {
-            logger.severe(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
-            throw new SQLException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
+            throw new DaoException(HSQLDBErrorConstants.SELECT_ERROR + e.getMessage());
         }
     }
 }

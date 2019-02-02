@@ -3,6 +3,7 @@ package com.haulmont.testtask.database.impl;
 import com.haulmont.testtask.database.dao.DaoManager;
 import com.haulmont.testtask.database.dao.GroupDao;
 import com.haulmont.testtask.database.dao.StudentDao;
+import com.haulmont.testtask.exception.database.impl.DaoException;
 
 public class HSQLDBDaoManager implements DaoManager {
     private static HSQLDBDaoManager instance;
@@ -21,7 +22,7 @@ public class HSQLDBDaoManager implements DaoManager {
     }
 
     @Override
-    public GroupDao getGroupDao() {
+    public GroupDao getGroupDao() throws DaoException {
         if (groupDao == null) {
             groupDao = new HSQLDBGroupDao();
         }
@@ -29,7 +30,7 @@ public class HSQLDBDaoManager implements DaoManager {
     }
 
     @Override
-    public StudentDao getStudentDao() {
+    public StudentDao getStudentDao() throws DaoException {
         if (studentDao == null) {
             studentDao = new HSQLDBStudentDao();
         }
